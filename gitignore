@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+
+# ForgeGradle's dev run directory - contains actual world saves and
+# per-run config, never something to commit
+run/
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs from local test runs
+*.log

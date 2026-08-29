@@ -1,0 +1,220 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        // Legacy alias - some older Mixin snapshot builds (like 0.7.11)
+        // that were pruned from repo.spongepowered.org/maven are still
+        // reachable through this older host.
+        maven { url = 'https://spongepowered.org' }
+        maven { url = 'https://jitpack.io' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        // MixinGradle: generates/validates the refmap at compile time and
+        // wires the annotation processor in. Required because Locks uses
+        // @Mixin classes (BlockMixin, WorldMixin, etc.) - without this the
+        // mixin config will fail to apply or won't compile correctly against
+        // MCP-mapped method names.
+        // 0.7-SNAPSHOT, not 0.6 - 0.6 targets ForgeGradle 2.3's task graph
+        // (genSrgs etc.), which FG3 doesn't have. Mismatch here is what
+        // throws "Could not find task 'genSrgs'".
+        // Published on Sponge's own maven (already in the repos block
+        // above), not jitpack - the com.github.xcfrg fork only ships 0.6.
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+// buildscript{} repos only cover plugin/classpath resolution, not the
+// project's own dependencies{} block below - org.spongepowered:mixin
+// needs Sponge's maven declared again here, or it has nowhere to resolve
+// from beyond ForgeGradle's built-in Forge/Mojang/MCP repos.
+repositories {
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    // Legacy alias - see note in buildscript{} repos above.
+    maven { url = 'https://spongepowered.org' }
+}
+
+version = '1.0.0'
+group = 'com.locksunofficiallegacy' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'locks-unofficial-legacy'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+minecraft {
+    // NOTE: Locks' source is written directly against SRG names
+    // (e.g. Minecraft.func_71410_x() rather than Minecraft.getMinecraft()),
+    // confirmed by inspecting the source files directly. FG3 requires
+    // mappings to be declared (confirmed: omitting it fails
+    // createMcpToSrg with "No value has been specified for property
+    // 'mappings'"), so this can't just be removed - need a different
+    // way to reconcile SRG-named source against an MCP-mapped classpath.
+    mappings channel: 'snapshot', version: '20171003-1.12'
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+// Applied here, after the minecraft{} block AND after dependencies{}
+// declares the 'minecraft' forge dependency below - rather than up near
+// the other apply plugin lines. MixinGradle looks for ForgeGradle's
+// genSrgs task at apply-time, and that task only gets registered once
+// ForgeGradle has actually resolved the 'minecraft' dependency, which
+// happens when dependencies{} is evaluated, not just when minecraft{}
+// is declared. Applying this any earlier fails with
+// "Could not find task 'genSrgs'".
+
+dependencies {
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2864'
+
+    // Mixin - matches roughly what the original Locks jar bundled (checked
+    // via javap against Locks-1.12.2-3.0.0.jar's own Mixin classes). Forge
+    // 1.12.2 already ships an older Mixin on the launch classpath, but we
+    // need the annotation processor for compilation.
+    // 0.7.11 wasn't found under repo.spongepowered.org/maven, but other
+    // working 1.12.2 mods' build.gradle files still resolve it through
+    // the legacy spongepowered.org host added to repositories{} above.
+    // Mixin 0.7.x bundles the annotation processor inside the main jar
+    // (a "fat jar") rather than publishing it as a separate :processor
+    // classifier - that classifier convention only started with 0.8.x.
+    // Gradle 5+ doesn't auto-wire annotationProcessor from compileOnly,
+    // so it needs to be declared explicitly, but pointing at the SAME
+    // main-jar coordinate rather than a nonexistent ":processor" suffix.
+    // MixinGradle 0.7-SNAPSHOT is documented (see MixinGradle README's
+    // compatibility table) as pairing with Mixin 0.8, not 0.7.11 or 0.8.5.
+    // 0.8+ publishes the annotation processor as a separate :processor
+    // classifier artifact rather than bundling it in the main jar, so
+    // annotationProcessor needs that classifier explicitly.
+    compileOnly 'org.spongepowered:mixin:0.8'
+    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
+
+    // fastutil - LockableHandler and friends use Int2ObjectMap. The
+    // original jar shaded this in directly; pulling it as a real
+    // dependency here instead of vendoring it is cleaner and lets Gradle
+    // manage the version.
+    implementation 'it.unimi.dsi:fastutil:8.5.9'
+
+    // You may put jars on which you depend on in ./libs or you may define them like so..
+    // compile "some.group:artifact:version:classifier"
+    // compile "some.group:artifact:version"
+
+    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
+    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // These dependencies get remapped to your current MCP mappings
+    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+
+    // For more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    // Locks' bundled mixin config, copied as-is into src/main/resources.
+    // The refmap name here MUST match what's referenced in the .refmap.json
+    // and what MixinLoader / mixins.locks.json expect at runtime.
+    add sourceSets.main, "mixins.locks.refmap.json"
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "locksunofficiallegacy",
+                "Specification-Vendor": "locksunofficiallegacy",
+                "Specification-Version": "1",
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor": "locksunofficiallegacy",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                // These four match what the original Locks-1.12.2-3.0.0.jar
+                // manifest declares (confirmed via `unzip -p Locks.jar
+                // META-INF/MANIFEST.MF`). Without these, Forge won't invoke
+                // MixinLoader as a coremod, and none of the @Mixin classes
+                // (BlockMixin, WorldMixin, TileEntityChestMixin, etc.) will
+                // ever get woven in - the mod will load but silently do nothing.
+                "TweakOrder": "0",
+                "MixinConfigs": "mixins.locks.json",
+                "FMLCorePluginContainsFMLMod": "true",
+                "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                "ForceLoadAsMod": "true",
+                "FMLCorePlugin": "melonslise.locks.mixin.MixinLoader"
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// This is the preferred method to reobfuscate your jar file
+jar.finalizedBy('reobfJar')
+// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
+//publish.dependsOn('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+// FML does not support loading exploded directories as mods.
+// Eclipse works fine because it merges classes and resources when debugging
+// IntelliJ used to work because FG2 forced the files to be jared during debugging.
+// Since FG3+ doesn't do that, we need to merge the sourcesets from gradle's side.
+sourceSets.each {
+    def dir = layout.buildDirectory.file("sourcesSets/$it.name").get().asFile
+    it.output.resourcesDir = dir
+    it.java.outputDir = dir
+}
+
+// Diagnostic task - prints compileJava's actual resolved classpath entries
+// for forge/client jars, to check which one javac is really compiling
+// against (vs. what `gradlew dependencies` reports, which can differ from
+// a task's wired classpath property in ForgeGradle 3 projects).
+task printCompileClasspath {
+    doLast {
+        compileJava.classpath.files.each { f ->
+            if (f.name.contains("forge") || f.name.contains("client")) {
+                println "CLASSPATH ENTRY: ${f}"
+            }
+        }
+    }
+}

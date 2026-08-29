@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern":
+	[
+		"NN",
+        "NN",
+        "I "
+	],
+	"key":
+	{
+		"I":
+		{
+			"type": "forge:ore_dict",
+			"ore": "ingotIron"
+		},
+		"N":
+        {
+            "type": "forge:ore_dict",
+            "ore": "nuggetIron"
+        }
+	},
+	"result":
+	{
+		"item": "locks:key_blank"
+	}
+}

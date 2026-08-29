@@ -1,0 +1,46 @@
+{
+  "mappings": {
+    "melonslise/locks/mixin/BlockChestMixin": {
+      "canPlaceBlockAt(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z": "Lnet/minecraft/block/BlockChest;func_176196_c(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z"
+    },
+    "melonslise/locks/mixin/BlockPistonBaseMixin": {
+      "canPush(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;ZLnet/minecraft/util/EnumFacing;)Z": "Lnet/minecraft/block/BlockPistonBase;func_185646_a(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;ZLnet/minecraft/util/EnumFacing;)Z"
+    },
+    "melonslise/locks/mixin/WorldMixin": {
+      "isBlockPowered(Lnet/minecraft/util/math/BlockPos;)Z": "Lnet/minecraft/world/World;func_175640_z(Lnet/minecraft/util/math/BlockPos;)Z"
+    },
+    "melonslise/locks/mixin/TileEntityLockableLootAccessor": {
+      "getItems": "func_190576_q()Lnet/minecraft/util/NonNullList;"
+    }
+  },
+  "data": {
+    "notch": {
+      "melonslise/locks/mixin/BlockChestMixin": {
+        "canPlaceBlockAt(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z": "Lapi;a(Lamu;Let;)Z"
+      },
+      "melonslise/locks/mixin/BlockPistonBaseMixin": {
+        "canPush(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;ZLnet/minecraft/util/EnumFacing;)Z": "Lawj;a(Lawt;Lamu;Let;Lfa;ZLfa;)Z"
+      },
+      "melonslise/locks/mixin/WorldMixin": {
+        "isBlockPowered(Lnet/minecraft/util/math/BlockPos;)Z": "Lamu;y(Let;)Z"
+      },
+      "melonslise/locks/mixin/TileEntityLockableLootAccessor": {
+        "getItems": "q()Lfi;"
+      }
+    },
+    "searge": {
+      "melonslise/locks/mixin/BlockChestMixin": {
+        "canPlaceBlockAt(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z": "Lnet/minecraft/block/BlockChest;func_176196_c(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z"
+      },
+      "melonslise/locks/mixin/BlockPistonBaseMixin": {
+        "canPush(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;ZLnet/minecraft/util/EnumFacing;)Z": "Lnet/minecraft/block/BlockPistonBase;func_185646_a(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;ZLnet/minecraft/util/EnumFacing;)Z"
+      },
+      "melonslise/locks/mixin/WorldMixin": {
+        "isBlockPowered(Lnet/minecraft/util/math/BlockPos;)Z": "Lnet/minecraft/world/World;func_175640_z(Lnet/minecraft/util/math/BlockPos;)Z"
+      },
+      "melonslise/locks/mixin/TileEntityLockableLootAccessor": {
+        "getItems": "func_190576_q()Lnet/minecraft/util/NonNullList;"
+      }
+    }
+  }
+}

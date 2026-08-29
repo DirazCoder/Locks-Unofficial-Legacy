@@ -1,0 +1,31 @@
+Locks — Credits
+===============
+
+Original mod: Melonslise
+https://www.curseforge.com/minecraft/mc-mods/locks
+https://www.curseforge.com/members/melonslise
+
+All design and code in this mod is Melonslise's work. The official 1.12.2 release
+(Locks-1.12.2-3.0.0) shipped Dec 16, 2021 and hasn't been updated since — this fork
+exists to keep that version compiling and running on current tooling, plus the one
+crash fix described in KNOWN_ISSUES.md that never made it into an official 1.12.2
+build. It isn't affiliated with or endorsed by Melonslise.
+
+People credited by the original author for help along the way, per the mod's own
+mcmod.info: Charles445, Diesieben07, Choonster, Gigaherz, Draco18s, JamiesWhiteShirt,
+Shadows, DShadowWolf, Xalcon, DarkCow, KillJoy, Ben, TheRealFarfetchd, JTK222, Cadiboo,
+Lykrast, Quadraxis, Tterrag, Alexbegt, Desht, McJty, AlcatrazEscapee, V0idWa1k3r,
+Muramasa, Kashike, Commoble, TheSilkMiner, and others on MMD and freesound.org.
+
+===========================================================================
+
+This mod runs on Minecraft Forge and Forge Mod Loader, and (in this build) on
+MixinBooter — see README.md for why MixinBooter is now required. Thanks to the
+respective teams behind all three:
+
+- Minecraft Forge / FML: LexManos, cpw, Mezz, and the Forge team.
+  https://github.com/MinecraftForge/MinecraftForge
+- Mod Coder Pack (MCP): Searge, Bspkrs, Fesh0r, ProfMobius, and the MCP team.
+- Mixin / MixinBooter: SpongePowered and CleanroomMC.
+  https://github.com/SpongePowered/Mixin
+  https://github.com/CleanroomMC/MixinBooter
